@@ -1,0 +1,2 @@
+"""SCosmetics backend package."""
+
