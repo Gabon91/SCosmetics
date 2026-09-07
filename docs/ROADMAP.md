@@ -10,8 +10,9 @@
 
 ## שלב 2 — Authentication ו-RBAC
 
-- [ ] מודל משתמשים ותפקידי `Customer`, `Beautician`, `Admin`.
-- [ ] רישום, התחברות ו-hashing לסיסמאות.
+- [x] מודל משתמשים ותפקידי `Customer`, `Beautician`, `Admin`.
+- [x] רישום משתמשת ו-hashing לסיסמה.
+- [ ] התחברות באמצעות אימייל וסיסמה.
 - [ ] Access Token ו-Refresh Token.
 - [ ] Protected Routes והרשאות בצד השרת.
 - [ ] בדיקות גישה לכל Role.
@@ -38,4 +39,3 @@
 - [ ] Alembic migrations ו-seed מלא.
 - [ ] Rate limiting, הרחבת cache ו-invalidation.
 - [ ] לפחות 10 בדיקות ו-GitHub Actions.
-
