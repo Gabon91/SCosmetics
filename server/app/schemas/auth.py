@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import (
     BaseModel,
@@ -40,6 +40,25 @@ class UserRegistrationRequest(BaseModel):
         if self.password != self.password_confirmation:
             raise ValueError("Passwords do not match")
         return self
+
+
+class UserLoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=128)
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str = Field(min_length=1)
+
+
+class TokenPairResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: Literal["bearer"] = "bearer"
+    access_token_expires_in: int
+    refresh_token_expires_in: int
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRead(BaseModel):

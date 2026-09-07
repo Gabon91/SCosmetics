@@ -12,8 +12,8 @@
 
 - [x] מודל משתמשים ותפקידי `Customer`, `Beautician`, `Admin`.
 - [x] רישום משתמשת ו-hashing לסיסמה.
-- [ ] התחברות באמצעות אימייל וסיסמה.
-- [ ] Access Token ו-Refresh Token.
+- [x] התחברות באמצעות אימייל וסיסמה.
+- [x] Access Token ו-Refresh Token.
 - [ ] Protected Routes והרשאות בצד השרת.
 - [ ] בדיקות גישה לכל Role.
 
