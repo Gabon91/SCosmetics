@@ -14,8 +14,8 @@
 - [x] רישום משתמשת ו-hashing לסיסמה.
 - [x] התחברות באמצעות אימייל וסיסמה.
 - [x] Access Token ו-Refresh Token.
-- [ ] Protected Routes והרשאות בצד השרת.
-- [ ] בדיקות גישה לכל Role.
+- [x] Protected Routes והרשאות בצד השרת.
+- [x] בדיקות גישה לכל Role.
 
 ## שלב 3 — Booking ו-Concurrency
 

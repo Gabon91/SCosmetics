@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.api.dependencies.auth import CurrentUser
 from app.core.tokens import IssuedTokenPair
 from app.db.session import get_db
 from app.schemas.auth import (
@@ -103,3 +104,20 @@ def refresh_tokens(
         return token_response(AuthService(session).refresh(data.refresh_token))
     except InvalidRefreshTokenError:
         raise unauthorized("Invalid or expired refresh token") from None
+
+
+@router.get(
+    "/me",
+    response_model=UserRead,
+    summary="Get the authenticated user",
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {
+            "description": "Missing or invalid access token",
+        },
+        status.HTTP_403_FORBIDDEN: {
+            "description": "User account is inactive",
+        },
+    },
+)
+def read_current_user(current_user: CurrentUser) -> UserRead:
+    return UserRead.model_validate(current_user)
