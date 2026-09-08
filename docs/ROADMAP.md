@@ -10,11 +10,12 @@
 
 ## שלב 2 — Authentication ו-RBAC
 
-- [ ] מודל משתמשים ותפקידי `Customer`, `Beautician`, `Admin`.
-- [ ] רישום, התחברות ו-hashing לסיסמאות.
-- [ ] Access Token ו-Refresh Token.
-- [ ] Protected Routes והרשאות בצד השרת.
-- [ ] בדיקות גישה לכל Role.
+- [x] מודל משתמשים ותפקידי `Customer`, `Beautician`, `Admin`.
+- [x] רישום משתמשת ו-hashing לסיסמה.
+- [x] התחברות באמצעות אימייל וסיסמה.
+- [x] Access Token ו-Refresh Token.
+- [x] Protected Routes והרשאות בצד השרת.
+- [x] בדיקות גישה לכל Role.
 
 ## שלב 3 — Booking ו-Concurrency
 
@@ -38,4 +39,3 @@
 - [ ] Alembic migrations ו-seed מלא.
 - [ ] Rate limiting, הרחבת cache ו-invalidation.
 - [ ] לפחות 10 בדיקות ו-GitHub Actions.
-
