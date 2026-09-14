@@ -2,21 +2,31 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
-from app.db.seed import seed_booking_demo, seed_packages, seed_treatments
+from app.core.rate_limit import RateLimiter, rate_limit_middleware
+from app.db.seed import seed_booking_demo, seed_equipment, seed_packages, seed_site_content, seed_team, seed_treatments
 from app.db.session import SessionLocal
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    limiter = RateLimiter()
+    app.state.rate_limiter = limiter
     with SessionLocal() as session:
         seed_treatments(session)
         if settings.environment == "development":
             seed_booking_demo(session)
             seed_packages(session)
-    yield
+            seed_site_content(session)
+            seed_equipment(session)
+            seed_team(session)
+    try:
+        yield
+    finally:
+        await limiter.close()
 
 
 app = FastAPI(
@@ -26,6 +36,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(BaseHTTPMiddleware, dispatch=rate_limit_middleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,

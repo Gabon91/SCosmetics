@@ -27,6 +27,20 @@ class AppointmentCreate(BaseModel):
         return value
 
 
+class StaffAppointmentCreate(AppointmentCreate):
+    customer_id: int = Field(gt=0)
+
+
+class AppointmentReschedule(BaseModel):
+    beautician_id: int = Field(gt=0)
+    start_time: datetime
+
+    @field_validator("start_time")
+    @classmethod
+    def validate_start_time(cls, value: datetime) -> datetime:
+        return AppointmentCreate.validate_start_time(value)
+
+
 class AppointmentRead(BaseModel):
     id: int
     customer_id: int

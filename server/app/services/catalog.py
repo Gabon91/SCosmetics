@@ -59,3 +59,10 @@ class CatalogService:
             )
         except RedisError:
             return
+
+    def invalidate(self) -> None:
+        """Remove stale public catalog data after an administrator changes a treatment."""
+        try:
+            self.cache.delete(CACHE_KEY)
+        except RedisError:
+            return

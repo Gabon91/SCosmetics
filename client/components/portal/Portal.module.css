@@ -3,39 +3,8 @@
   direction: rtl;
   background: var(--pink-light);
   color: var(--ink);
-  padding: 28px clamp(16px, 4vw, 64px) 0;
+  padding: 170px clamp(16px, 4vw, 64px) 0;
 }
-
-.header {
-  max-width: 1440px;
-  margin: 0 auto;
-  min-height: 100px;
-  padding: 12px 26px;
-  display: flex;
-  align-items: center;
-  gap: 36px;
-  border: 1px solid rgba(196, 154, 88, .32);
-  border-radius: 34px;
-  background: rgba(255, 253, 252, .88);
-  box-shadow: 0 14px 40px rgba(51, 38, 38, .07);
-}
-
-.brand { display: flex; align-items: center; flex: 0 0 auto; }
-.brand img { width: 84px; height: 84px; object-fit: contain; }
-.tabs { display: flex; align-items: center; gap: clamp(8px, 2vw, 26px); flex: 1; }
-.tabs button {
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  padding: 11px 4px;
-  font-size: clamp(16px, 1.35vw, 20px);
-  font-weight: 600;
-  border-bottom: 2px solid transparent;
-}
-.tabs button:hover, .tabs .active { color: #a35e6b; border-bottom-color: var(--gold); }
-.homeLink { color: var(--ink-soft); white-space: nowrap; font-size: 15px; }
-.homeLink:hover { color: #a35e6b; }
 
 .intro, .sectionHeading { text-align: center; }
 .intro { padding: clamp(45px, 7vw, 86px) 12px 28px; }
@@ -86,13 +55,12 @@
 .listItem span { color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
 .footer { margin: 0 calc(-1 * clamp(16px, 4vw, 64px)); padding: 36px 20px; background: var(--ink); color: var(--white); text-align: center; }
 
+@media (max-width: 960px) {
+  .root { padding-top: 220px; }
+}
+
 @media (max-width: 760px) {
-  .root { padding-top: 12px; }
-  .header { flex-wrap: wrap; gap: 6px; padding: 12px; border-radius: 24px; }
-  .brand img { width: 60px; height: 60px; }
-  .tabs { order: 3; flex: 0 0 100%; justify-content: space-around; }
-  .tabs button { font-size: 15px; }
-  .homeLink { margin-right: auto; }
+  .root { padding-top: 240px; }
   .bookingGrid, .accountGrid { grid-template-columns: 1fr; }
   .formRow { grid-template-columns: 1fr; }
   .intro { padding-top: 45px; }

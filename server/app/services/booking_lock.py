@@ -38,13 +38,22 @@ class BookingLockManager:
         beautician_id: int,
         appointment_date: date,
     ) -> Generator[None, None, None]:
-        day = appointment_date.isoformat()
-        keys = sorted(
-            [
-                f"booking:beautician:{beautician_id}:{day}",
-                f"booking:treatment:{treatment_id}:{day}",
-            ]
-        )
+        with self.hold_many([(treatment_id, beautician_id, appointment_date)]):
+            yield
+
+    @contextmanager
+    def hold_many(
+        self, resources: list[tuple[int, int, date]],
+    ) -> Generator[None, None, None]:
+        """Acquire both old and new slot locks in one stable order."""
+        keys = sorted({
+            key
+            for treatment_id, beautician_id, appointment_date in resources
+            for key in (
+                f"booking:beautician:{beautician_id}:{appointment_date.isoformat()}",
+                f"booking:treatment:{treatment_id}:{appointment_date.isoformat()}",
+            )
+        })
         acquired: list[Lock] = []
 
         try:

@@ -67,3 +67,29 @@ def complete_appointment(
     except Exception:
         session.rollback()
         raise
+
+
+def mark_no_show(session: Session, appointment_id: int, staff: User) -> Appointment:
+    """Mark a missed appointment without consuming a package session."""
+    try:
+        appointment = session.scalar(
+            select(Appointment).where(Appointment.id == appointment_id).with_for_update()
+        )
+        if appointment is None:
+            raise AppointmentNotFoundError
+        if staff.role == UserRole.BEAUTICIAN:
+            own_id = session.scalar(select(Beautician.id).where(Beautician.user_id == staff.id))
+            if own_id != appointment.beautician_id:
+                raise AppointmentPermissionError
+        elif staff.role != UserRole.ADMIN:
+            raise AppointmentPermissionError
+        if appointment.status == AppointmentStatus.NO_SHOW:
+            return appointment
+        if appointment.status != AppointmentStatus.BOOKED:
+            raise AppointmentStateError
+        appointment.status = AppointmentStatus.NO_SHOW
+        session.commit()
+        return appointment
+    except Exception:
+        session.rollback()
+        raise

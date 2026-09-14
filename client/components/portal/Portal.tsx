@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { SiteHeader } from "@/components/shared/SiteHeader";
 import { AccountPanel } from "./AccountPanel";
 import { AuthPanel, type AuthForm } from "./AuthPanel";
 import { BookingPanel } from "./BookingPanel";
@@ -144,6 +143,16 @@ export function Portal() {
     }
   }
 
+  async function handleProfileSave(profile: Pick<User, "first_name" | "last_name" | "email" | "phone">) {
+    setBusy(true);
+    try {
+      await api("/me/profile", { method: "PATCH", body: JSON.stringify(profile) }, true);
+      await loadAccount();
+      setMessage("הפרטים האישיים נשמרו.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "לא ניתן לשמור את הפרטים."); }
+    finally { setBusy(false); }
+  }
+
   async function handleAccept(entry: WaitlistEntry) {
     if (!entry.offered_start_time || !entry.beautician_id) return;
     setBusy(true);
@@ -182,17 +191,7 @@ export function Portal() {
 
   return (
     <main className={styles.root} data-portal>
-      <header className={styles.header}>
-        <Link href="/" className={styles.brand} aria-label="חזרה לדף הבית">
-          <Image src="/images/logo-scosmetics.png" alt="S Cosmetics" width={1254} height={1254} />
-        </Link>
-        <nav className={styles.tabs} aria-label="אזור לקוחות">
-          <button className={tab === "book" ? styles.active : ""} onClick={() => switchTab("book")}>קביעת תור</button>
-          <button className={tab === "packages" ? styles.active : ""} onClick={() => switchTab("packages")}>חבילות</button>
-          <button className={tab === "account" ? styles.active : ""} onClick={() => switchTab("account")}>האזור האישי</button>
-        </nav>
-        <Link className={styles.homeLink} href="/">לדף הבית ←</Link>
-      </header>
+      <SiteHeader variant="portal" activeTab={tab} onTabChange={switchTab} />
 
       <div className={styles.intro}>
         <span>הטיפול שלך, בדרך שלך</span>
@@ -235,6 +234,7 @@ export function Portal() {
           onCancel={handleCancel}
           onAccept={handleAccept}
           onLogout={logout}
+          onProfileSave={handleProfileSave}
         />
       )}
 

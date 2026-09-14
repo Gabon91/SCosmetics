@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import appointments, auth, health, me, orders, packages, treatments, waitlist
+from app.api.routes import appointments, auth, cms, health, me, orders, packages, site, staff, treatments, waitlist
 from app.core.config import settings
 
 api_router = APIRouter()
@@ -39,4 +39,19 @@ api_router.include_router(
     waitlist.router,
     prefix=f"{settings.api_v1_prefix}/waitlist",
     tags=["waitlist"],
+)
+api_router.include_router(
+    staff.router,
+    prefix=f"{settings.api_v1_prefix}/staff",
+    tags=["staff"],
+)
+api_router.include_router(
+    cms.router,
+    prefix=f"{settings.api_v1_prefix}/cms",
+    tags=["cms"],
+)
+api_router.include_router(
+    site.router,
+    prefix=f"{settings.api_v1_prefix}/site",
+    tags=["site"],
 )

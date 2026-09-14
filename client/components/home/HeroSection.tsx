@@ -1,18 +1,15 @@
 import styles from "@/app/page.module.css";
 
-export function HeroSection() {
+export function HeroSection({ content }: { content: Record<string, string> }) {
   return (
     <section className={styles.hero} id="top">
       <div className={styles.heroCopy}>
-        <span className={styles.eyebrow}>מדע, דיוק וטיפוח שנפגשים במקום אחד</span>
+        <span className={styles.eyebrow}>{content.hero_eyebrow ?? "מדע, דיוק וטיפוח שנפגשים במקום אחד"}</span>
         <h1>
-          להרגיש טוב בעור שלך,
-          <span> בכל שלב בדרך.</span>
+          {content.hero_title_first ?? "להרגיש טוב בעור שלך,"}
+          <span>{content.hero_title_second ?? " בכל שלב בדרך."}</span>
         </h1>
-        <p>
-          קליניקה לקוסמטיקה פרה-רפואית המתמחה בטיפולי פנים, אנטי אייג׳ינג
-          ולייזר — עם אבחון אישי, טכנולוגיה מתקדמת וליווי מקצועי.
-        </p>
+        <p>{content.hero_description ?? "קליניקה לקוסמטיקה פרה-רפואית המתמחה בטיפולי פנים, אנטי אייג׳ינג ולייזר — עם אבחון אישי, טכנולוגיה מתקדמת וליווי מקצועי."}</p>
         <div className={styles.heroActions}>
           <a className={styles.primaryButton} href="/portal?tab=book">
             קביעת תור

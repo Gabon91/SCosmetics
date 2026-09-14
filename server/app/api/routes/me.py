@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Annotated
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload, selectinload
 
 from app.api.dependencies.auth import DatabaseSession, require_roles
@@ -12,6 +13,7 @@ from app.models.appointment import Appointment
 from app.models.order import Order, OrderItem
 from app.models.package import UserPackage
 from app.models.user import User, UserRole
+from app.schemas.auth import CustomerProfilePatch, UserRead
 from app.models.waitlist import WaitlistEntry
 from app.schemas.appointment import AppointmentRead
 from app.schemas.commerce import OrderItemRead, OrderRead, UserPackageRead
@@ -19,6 +21,18 @@ from app.schemas.waitlist import WaitlistRead, waitlist_read
 
 router = APIRouter()
 Customer = Annotated[User, Depends(require_roles(UserRole.CUSTOMER))]
+
+
+@router.patch("/profile", response_model=UserRead)
+def update_my_profile(data: CustomerProfilePatch, customer: Customer, session: DatabaseSession) -> User:
+    for field, value in data.model_dump(exclude_unset=True, exclude_none=True).items():
+        setattr(customer, field, value.strip().lower() if field == "email" else value.strip())
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(409, "Email already registered") from None
+    return customer
 
 
 @router.get("/appointments", response_model=list[AppointmentRead])

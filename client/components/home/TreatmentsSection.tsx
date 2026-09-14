@@ -20,7 +20,7 @@ export function TreatmentsSection({ treatments }: TreatmentsSectionProps) {
           <span className={styles.sectionNumber}>טיפולים נבחרים</span>
           <h2>הטיפול הנכון, בזמן הנכון.</h2>
         </div>
-        <p>קטלוג הטיפולים נטען ישירות מ־FastAPI ומוכן בהמשך לניהול דרך ה־CMS.</p>
+        <p>תוכנית הטיפול מותאמת עבורך אישית, לאחר אבחון והיכרות עם הצרכים שלך.</p>
       </div>
 
       <div className={styles.treatmentGrid}>

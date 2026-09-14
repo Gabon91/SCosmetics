@@ -83,6 +83,7 @@ class AvailabilityService:
         appointment_date: date,
         beautician_id: int | None = None,
         customer_id: int | None = None,
+        exclude_appointment_id: int | None = None,
     ) -> AvailabilityResult:
         treatment = self.session.scalar(
             select(Treatment).where(
@@ -104,6 +105,7 @@ class AvailabilityService:
             treatment_id,
             [beautician.id for beautician in beauticians],
             appointment_date,
+            exclude_appointment_id,
         )
         offers = self._blocking_offers(
             treatment_id,
@@ -177,6 +179,7 @@ class AvailabilityService:
         treatment_id: int,
         beautician_ids: list[int],
         appointment_date: date,
+        exclude_appointment_id: int | None,
     ) -> list[Appointment]:
         if not beautician_ids:
             return []
@@ -198,11 +201,11 @@ class AvailabilityService:
             Appointment.status == AppointmentStatus.BOOKED,
             Appointment.start_time < day_end,
             Appointment.end_time > day_start,
-            or_(
-                Appointment.beautician_id.in_(beautician_ids),
-                Appointment.treatment_id == treatment_id,
-            ),
+            or_(Appointment.beautician_id.in_(beautician_ids),
+                Appointment.treatment_id == treatment_id),
         )
+        if exclude_appointment_id is not None:
+            statement = statement.where(Appointment.id != exclude_appointment_id)
         return list(self.session.scalars(statement).all())
 
     def _blocking_offers(

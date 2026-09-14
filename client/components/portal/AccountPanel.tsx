@@ -1,4 +1,5 @@
 import type { Appointment, CustomerPackage, Order, Treatment, User, WaitlistEntry } from "./types";
+import { ProfileEditor } from "./ProfileEditor";
 import styles from "./Portal.module.css";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   onCancel: (appointmentId: number) => Promise<void>;
   onAccept: (entry: WaitlistEntry) => Promise<void>;
   onLogout: () => void;
+  onProfileSave: (profile: Pick<User, "first_name" | "last_name" | "email" | "phone">) => Promise<void>;
 };
 
 const dateTime = new Intl.DateTimeFormat("he-IL", { timeZone: "Asia/Jerusalem", dateStyle: "medium", timeStyle: "short" });
@@ -21,11 +23,12 @@ function titleFor(treatments: Treatment[], id: number) {
   return treatments.find((item) => item.id === id)?.name ?? `טיפול #${id}`;
 }
 
-export function AccountPanel({ user, appointments, customerPackages, orders, waitlist, treatments, busy, onCancel, onAccept, onLogout }: Props) {
+export function AccountPanel({ user, appointments, customerPackages, orders, waitlist, treatments, busy, onCancel, onAccept, onLogout, onProfileSave }: Props) {
   return (
     <section className={styles.content} aria-labelledby="account-title">
       <div className={styles.sectionHeading}><span className={styles.eyebrow}>03 / האזור האישי</span><h2 id="account-title">שלום, {user.first_name}</h2><p>התורים, החבילות וההזמנות שלך במקום אחד.</p><button className={styles.textButton} type="button" onClick={onLogout}>התנתקות</button></div>
       <div className={styles.accountGrid}>
+        <ProfileEditor key={user.id} user={user} busy={busy} onSave={onProfileSave} />
         <section className={styles.card} aria-labelledby="appointments-title">
           <h3 id="appointments-title">התורים שלי</h3>
           {!appointments.length && <p className={styles.muted}>עדיין לא קבעת תור.</p>}
