@@ -12,17 +12,29 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("treatments") as batch_op:
-        batch_op.create_check_constraint(
-            "ck_treatments_duration_15_minute_increment",
-            "duration_minutes > 0 AND duration_minutes % 15 = 0",
+    treatment_constraints = {
+        constraint["name"]
+        for constraint in sa.inspect(op.get_bind()).get_check_constraints(
+            "treatments"
         )
+    }
+    if "ck_treatments_duration_15_minute_increment" not in treatment_constraints:
+        with op.batch_alter_table("treatments") as batch_op:
+            batch_op.create_check_constraint(
+                "ck_treatments_duration_15_minute_increment",
+                "duration_minutes > 0 AND duration_minutes % 15 = 0",
+            )
 
     op.create_table(
         "beauticians",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("bio", sa.Text(), server_default="", nullable=False),
+        sa.Column(
+            "bio",
+            sa.Text(),
+            server_default=sa.text("('')"),
+            nullable=False,
+        ),
         sa.Column(
             "active",
             sa.Boolean(),

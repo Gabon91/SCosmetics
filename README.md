@@ -16,6 +16,8 @@
 - רישום לקוחה עם ולידציה ושמירת password hash באמצעות Argon2.
 - התחברות מאובטחת עם JWT Access Token וחידוש באמצעות Refresh Token.
 - נתיב משתמש מוגן ותשתית הרשאות לפי Customer, Beautician ו-Admin.
+- צפייה בזמינות מטפלות במרווחי 15 דקות לפי משך הטיפול ושעות העבודה.
+- יצירת תור ללקוחה מחוברת: בדיקת הסמכה, שעות עבודה והתנגשויות, עם Redis Lock ו-Transaction במסד הנתונים.
 - שלד CMS ראשוני עם KPI ותורי היום.
 - Docker Compose עבור FastAPI, MySQL ו-Redis.
 - בדיקות API בסיסיות עם pytest.
@@ -69,7 +71,14 @@ docker compose up --build
 docker-compose up --build
 ```
 
-במצב מקומי ללא Docker השרת משתמש במסד SQLite קטן כדי שהתחלת העבודה תהיה פשוטה. בתוך Docker הוא משתמש ב-MySQL לפי דרישות האפיון.
+במצב מקומי ללא הגדרת `DATABASE_URL` השרת משתמש במסד SQLite קטן כדי שהתחלת העבודה תהיה פשוטה. בתוך Docker הוא משתמש ב-MySQL לפי דרישות האפיון. אפשר גם להריץ MySQL מקומי ו-Redis ב-Docker כאשר `server/.env` מצביע לשניהם.
+
+`GET /api/v1/appointments/availability` מציג שעות פנויות למשתמש מחובר.
+`POST /api/v1/appointments` יוצר תור ללקוחה מחוברת ומחזיר `201`. הבקשה כוללת
+`treatment_id`, `beautician_id` ו-`start_time` עם אזור זמן (לדוגמה
+`2026-09-14T09:00:00+03:00`). שעה תפוסה מחזירה `409`. יצירת תור דורשת Redis
+פעיל; אם הוא אינו זמין, השרת מחזיר `503` ואינו שומר תור. בדיקות היחידה
+משתמשות בנעילה מדומה ואינן דורשות Docker.
 
 ## בדיקות
 
@@ -77,6 +86,19 @@ docker-compose up --build
 cd server
 .\.venv\Scripts\python.exe -m pytest
 ```
+
+בדיקת מקביליות מול MySQL ו-Redis אמיתיים אינה חלק מ-`pytest` הרגיל. הפעילו
+את שני השירותים ואת שרת ה-API בפורט `8004`, ודאו שקובץ `server/.env` מצביע
+אליהם, ואז הריצו מתוך `server`:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.check_concurrent_booking
+```
+
+הסקריפט יוצר לקוחה זמנית, מאתר שעה שבה שתי מטפלות פנויות לאותו טיפול,
+ושולח שתי בקשות הזמנה יחד. התוצאה התקינה היא `201` ו-`409`, עם תור אחד בלבד
+ב-MySQL. בסיום הוא מוחק רק את הלקוחה והתור שיצר. הוא מסרב לרוץ מול שרת או
+מסד נתונים מרוחקים.
 
 ```powershell
 cd client

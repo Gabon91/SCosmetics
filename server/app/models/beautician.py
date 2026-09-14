@@ -11,6 +11,7 @@ from sqlalchemy import (
     Text,
     Time,
     UniqueConstraint,
+    text,
     true,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -47,7 +48,11 @@ class Beautician(Base):
         unique=True,
         index=True,
     )
-    bio: Mapped[str] = mapped_column(Text, default="", server_default="")
+    bio: Mapped[str] = mapped_column(
+        Text,
+        default="",
+        server_default=text("('')"),
+    )
     active: Mapped[bool] = mapped_column(
         Boolean,
         default=True,
