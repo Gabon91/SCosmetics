@@ -21,6 +21,11 @@ html {
   scroll-snap-type: y mandatory;
 }
 
+html:has([data-portal]) {
+  scroll-snap-type: none;
+  scroll-padding-top: 0;
+}
+
 body {
   min-height: 100vh;
   margin: 0;

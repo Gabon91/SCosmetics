@@ -9,6 +9,7 @@ class AppointmentCreate(BaseModel):
     treatment_id: int = Field(gt=0)
     beautician_id: int = Field(gt=0)
     start_time: datetime
+    user_package_id: int | None = Field(default=None, gt=0)
 
     @field_validator("start_time")
     @classmethod
@@ -31,11 +32,22 @@ class AppointmentRead(BaseModel):
     customer_id: int
     beautician_id: int
     treatment_id: int
+    user_package_id: int | None
     start_time: datetime
     end_time: datetime
     status: AppointmentStatus
+    completed_at: datetime | None
 
     model_config = ConfigDict(from_attributes=True)
+
+    @field_validator("start_time", "end_time", "completed_at")
+    @classmethod
+    def expose_utc_offset(cls, value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        if value.tzinfo is None:
+            return value.replace(tzinfo=UTC)
+        return value.astimezone(UTC)
 
 
 class AvailabilitySlotRead(BaseModel):

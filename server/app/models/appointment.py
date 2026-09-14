@@ -60,6 +60,10 @@ class Appointment(Base):
     treatment_id: Mapped[int] = mapped_column(
         ForeignKey("treatments.id"),
     )
+    user_package_id: Mapped[int | None] = mapped_column(
+        ForeignKey("user_packages.id"),
+        index=True,
+    )
     start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[AppointmentStatus] = mapped_column(
@@ -78,7 +82,9 @@ class Appointment(Base):
         DateTime(timezone=True),
         server_default=func.now(),
     )
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     customer: Mapped[User] = relationship(foreign_keys=[customer_id])
     beautician: Mapped[Beautician] = relationship()
     treatment: Mapped[Treatment] = relationship()
+    user_package = relationship("UserPackage")

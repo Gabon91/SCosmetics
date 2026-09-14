@@ -14,6 +14,7 @@ from app.models.beautician import (
 )
 from app.models.treatment import Treatment
 from app.models.user import User, UserRole
+from app.models.waitlist import WaitlistEntry, WaitlistStatus
 
 SLOT_INTERVAL_MINUTES = 15
 
@@ -81,6 +82,7 @@ class AvailabilityService:
         treatment_id: int,
         appointment_date: date,
         beautician_id: int | None = None,
+        customer_id: int | None = None,
     ) -> AvailabilityResult:
         treatment = self.session.scalar(
             select(Treatment).where(
@@ -103,6 +105,11 @@ class AvailabilityService:
             [beautician.id for beautician in beauticians],
             appointment_date,
         )
+        offers = self._blocking_offers(
+            treatment_id,
+            [beautician.id for beautician in beauticians],
+            appointment_date,
+        )
         now = datetime.now(self.business_timezone)
         slots: list[AvailableSlot] = []
         seen_slots: set[tuple[int, datetime]] = set()
@@ -121,6 +128,8 @@ class AvailabilityService:
                     treatment,
                     appointment_date,
                     appointments,
+                    offers,
+                    customer_id,
                     now,
                 ):
                     slot_key = (slot.beautician_id, slot.start_time)
@@ -196,6 +205,28 @@ class AvailabilityService:
         )
         return list(self.session.scalars(statement).all())
 
+    def _blocking_offers(
+        self,
+        treatment_id: int,
+        beautician_ids: list[int],
+        appointment_date: date,
+    ) -> list[WaitlistEntry]:
+        if not beautician_ids:
+            return []
+        return list(
+            self.session.scalars(
+                select(WaitlistEntry).where(
+                    WaitlistEntry.status == WaitlistStatus.OFFERED,
+                    WaitlistEntry.preferred_date == appointment_date,
+                    WaitlistEntry.offer_expires_at > datetime.now(UTC),
+                    or_(
+                        WaitlistEntry.treatment_id == treatment_id,
+                        WaitlistEntry.beautician_id.in_(beautician_ids),
+                    ),
+                )
+            ).all()
+        )
+
     def _slots_for_shift(
         self,
         beautician: Beautician,
@@ -203,6 +234,8 @@ class AvailabilityService:
         treatment: Treatment,
         appointment_date: date,
         appointments: list[Appointment],
+        offers: list[WaitlistEntry],
+        customer_id: int | None,
         now: datetime,
     ) -> list[AvailableSlot]:
         shift_start = datetime.combine(
@@ -227,6 +260,8 @@ class AvailabilityService:
                 slot_start,
                 slot_end,
                 appointments,
+                offers,
+                customer_id,
             ):
                 slots.append(
                     AvailableSlot(
@@ -250,11 +285,13 @@ class AvailabilityService:
         slot_start: datetime,
         slot_end: datetime,
         appointments: list[Appointment],
+        offers: list[WaitlistEntry],
+        customer_id: int | None,
     ) -> bool:
         slot_start_utc = slot_start.astimezone(UTC)
         slot_end_utc = slot_end.astimezone(UTC)
 
-        return any(
+        appointment_conflict = any(
             (
                 appointment.beautician_id == beautician_id
                 or appointment.treatment_id == treatment_id
@@ -267,3 +304,24 @@ class AvailabilityService:
             )
             for appointment in appointments
         )
+        if appointment_conflict:
+            return True
+
+        for offer in offers:
+            if offer.offered_start_time is None or offer.offered_end_time is None:
+                continue
+            offer_start = as_utc(offer.offered_start_time)
+            offer_end = as_utc(offer.offered_end_time)
+            if not ranges_overlap(slot_start_utc, slot_end_utc, offer_start, offer_end):
+                continue
+            if (
+                offer.user_id == customer_id
+                and offer.treatment_id == treatment_id
+                and offer.beautician_id == beautician_id
+                and slot_start_utc == offer_start
+                and slot_end_utc == offer_end
+            ):
+                continue
+            if offer.treatment_id == treatment_id or offer.beautician_id == beautician_id:
+                return True
+        return False

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import hash_password
 from app.models.beautician import Beautician, BeauticianWorkingHours
+from app.models.package import Package
 from app.models.treatment import Treatment
 from app.models.user import User, UserRole
 
@@ -110,4 +111,39 @@ def seed_booking_demo(session: Session) -> None:
     )
 
     session.add_all([sigal, demo_beautician])
+    session.commit()
+
+
+def seed_packages(session: Session) -> None:
+    if session.scalar(select(Package.id).limit(1)) is not None:
+        return
+
+    treatments = {
+        treatment.name: treatment
+        for treatment in session.scalars(select(Treatment)).all()
+    }
+    laser = treatments.get("הסרת שיער בלייזר")
+    facial = treatments.get("טיפול זוהר לפנים")
+    packages = []
+    if laser is not None:
+        packages.append(
+            Package(
+                name="סדרת לייזר — 10 טיפולים",
+                price=Decimal("2500.00"),
+                sessions=10,
+                validity_days=365,
+                treatments=[laser],
+            )
+        )
+    if facial is not None:
+        packages.append(
+            Package(
+                name="סדרת טיפולי פנים — 5 טיפולים",
+                price=Decimal("1800.00"),
+                sessions=5,
+                validity_days=180,
+                treatments=[facial],
+            )
+        )
+    session.add_all(packages)
     session.commit()

@@ -1,0 +1,99 @@
+.root {
+  min-height: 100vh;
+  direction: rtl;
+  background: var(--pink-light);
+  color: var(--ink);
+  padding: 28px clamp(16px, 4vw, 64px) 0;
+}
+
+.header {
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: 100px;
+  padding: 12px 26px;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  border: 1px solid rgba(196, 154, 88, .32);
+  border-radius: 34px;
+  background: rgba(255, 253, 252, .88);
+  box-shadow: 0 14px 40px rgba(51, 38, 38, .07);
+}
+
+.brand { display: flex; align-items: center; flex: 0 0 auto; }
+.brand img { width: 84px; height: 84px; object-fit: contain; }
+.tabs { display: flex; align-items: center; gap: clamp(8px, 2vw, 26px); flex: 1; }
+.tabs button {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 11px 4px;
+  font-size: clamp(16px, 1.35vw, 20px);
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+.tabs button:hover, .tabs .active { color: #a35e6b; border-bottom-color: var(--gold); }
+.homeLink { color: var(--ink-soft); white-space: nowrap; font-size: 15px; }
+.homeLink:hover { color: #a35e6b; }
+
+.intro, .sectionHeading { text-align: center; }
+.intro { padding: clamp(45px, 7vw, 86px) 12px 28px; }
+.intro span, .eyebrow { color: #a35e6b; letter-spacing: .12em; font-size: 14px; font-weight: 700; }
+.intro h1 { margin: 12px 0 16px; color: var(--ink); font-size: clamp(36px, 5vw, 68px); font-weight: 400; line-height: 1.18; }
+.intro p, .sectionHeading p { margin: 0; color: var(--ink-soft); font-size: clamp(17px, 1.5vw, 21px); line-height: 1.6; }
+.message { max-width: 900px; margin: 0 auto 24px; border: 1px solid var(--pink-strong); background: var(--white); border-radius: 18px; padding: 16px 22px; text-align: center; line-height: 1.6; }
+.content { max-width: 1200px; margin: 0 auto; padding: 25px 0 100px; }
+.sectionHeading { margin: 0 auto 38px; }
+.sectionHeading h2 { color: #a35e6b; font-size: clamp(30px, 3.7vw, 48px); line-height: 1.2; font-weight: 500; margin: 14px 0; }
+.sectionHeading h2::after { content: ""; display: block; width: 100px; height: 2px; background: var(--gold); margin: 18px auto 0; }
+.authCard, .card, .packageCard { border: 1px solid rgba(196, 154, 88, .23); background: #fffaf9; border-radius: 28px; box-shadow: 0 16px 42px rgba(51, 38, 38, .055); }
+.authCard { max-width: 520px; margin: 12px auto 100px; padding: clamp(26px, 5vw, 48px); text-align: center; }
+.authCard h2 { font-size: 32px; font-weight: 500; margin: 8px 0 12px; }
+.authCard p { color: var(--ink-soft); font-size: 17px; line-height: 1.6; }
+.form { display: grid; gap: 18px; text-align: right; }
+.formRow { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.form label { display: grid; gap: 8px; font-size: 16px; font-weight: 600; }
+.form input, .form select { width: 100%; min-height: 48px; border: 1px solid rgba(51, 38, 38, .22); border-radius: 12px; padding: 9px 13px; background: var(--white); color: var(--ink); font-weight: 400; }
+.form input:focus, .form select:focus { outline: 2px solid var(--pink-strong); outline-offset: 2px; }
+.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 100px; padding: 10px 24px; border: 1px solid var(--pink-strong); cursor: pointer; font-weight: 700; transition: transform .2s, background .2s; }
+.primaryButton { background: var(--pink-strong); color: var(--ink); }
+.secondaryButton { background: transparent; color: #8b4e5b; }
+.primaryButton:hover, .secondaryButton:hover { transform: translateY(-2px); background: var(--pink-powder); }
+.primaryButton:disabled, .secondaryButton:disabled { cursor: wait; opacity: .65; transform: none; }
+.textButton { border: 0; background: transparent; color: #965969; cursor: pointer; padding: 10px; text-decoration: underline; text-underline-offset: 4px; }
+.textButton:hover { color: var(--ink); }
+.bookingGrid { display: grid; grid-template-columns: minmax(280px, .85fr) minmax(320px, 1.15fr); gap: 24px; align-items: start; }
+.card { padding: clamp(22px, 3vw, 36px); }
+.card h3 { font-size: 27px; margin: 0 0 24px; font-weight: 500; }
+.hint, .muted { color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+.slotGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); gap: 10px; max-height: 430px; overflow: auto; padding: 2px; }
+.slot { min-height: 70px; display: grid; gap: 2px; place-content: center; text-align: center; border: 1px solid var(--pink-strong); border-radius: 14px; background: var(--pink-light); color: var(--ink); cursor: pointer; }
+.slot:hover { background: var(--pink-powder); border-color: var(--gold); }
+.slot strong { font-size: 21px; }
+.slot span { font-size: 13px; }
+.waitlistBox { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 14px; line-height: 1.5; }
+.packageGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.packageCard { padding: clamp(28px, 4vw, 48px); display: grid; align-content: start; gap: 18px; }
+.packageCard h3 { font-size: clamp(27px, 3vw, 38px); font-weight: 500; margin: 0; }
+.packageCard p { color: var(--ink-soft); font-size: 18px; margin: 0; }
+.price { color: #a35e6b; font-size: 36px; font-weight: 500; }
+.demoNotice { text-align: center; margin-top: 28px; color: var(--ink-soft); line-height: 1.6; }
+.accountGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.listItem { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding: 18px 0; }
+.listItem div { display: grid; gap: 7px; }
+.listItem strong { font-size: 18px; }
+.listItem span { color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+.footer { margin: 0 calc(-1 * clamp(16px, 4vw, 64px)); padding: 36px 20px; background: var(--ink); color: var(--white); text-align: center; }
+
+@media (max-width: 760px) {
+  .root { padding-top: 12px; }
+  .header { flex-wrap: wrap; gap: 6px; padding: 12px; border-radius: 24px; }
+  .brand img { width: 60px; height: 60px; }
+  .tabs { order: 3; flex: 0 0 100%; justify-content: space-around; }
+  .tabs button { font-size: 15px; }
+  .homeLink { margin-right: auto; }
+  .bookingGrid, .accountGrid { grid-template-columns: 1fr; }
+  .formRow { grid-template-columns: 1fr; }
+  .intro { padding-top: 45px; }
+}

@@ -14,12 +14,12 @@ export function HeroSection() {
           ולייזר — עם אבחון אישי, טכנולוגיה מתקדמת וליווי מקצועי.
         </p>
         <div className={styles.heroActions}>
-          <a className={styles.primaryButton} href="#treatments">
-            הכירי את הטיפולים
+          <a className={styles.primaryButton} href="/portal?tab=book">
+            קביעת תור
             <span aria-hidden="true">←</span>
           </a>
-          <a className={styles.textButton} href="#about">
-            הסיפור שלנו
+          <a className={styles.textButton} href="#treatments">
+            הכירי את הטיפולים
           </a>
         </div>
         <div className={styles.trustRow} aria-label="יתרונות הקליניקה">

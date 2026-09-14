@@ -33,8 +33,14 @@ def test_migrations_create_expected_schema_and_can_downgrade() -> None:
             "beautician_treatments",
             "beautician_working_hours",
             "beauticians",
+            "order_items",
+            "orders",
+            "package_treatments",
+            "packages",
             "treatments",
+            "user_packages",
             "users",
+            "waitlist",
         }
         assert {column["name"] for column in inspector.get_columns("users")} == {
             "id",
@@ -67,10 +73,12 @@ def test_migrations_create_expected_schema_and_can_downgrade() -> None:
             "customer_id",
             "beautician_id",
             "treatment_id",
+            "user_package_id",
             "start_time",
             "end_time",
             "status",
             "created_at",
+            "completed_at",
         }
         appointment_indexes = {
             index["name"] for index in inspector.get_indexes("appointments")

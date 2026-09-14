@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
-from app.db.seed import seed_booking_demo, seed_treatments
+from app.db.seed import seed_booking_demo, seed_packages, seed_treatments
 from app.db.session import SessionLocal
 
 
@@ -15,6 +15,7 @@ async def lifespan(_: FastAPI):
         seed_treatments(session)
         if settings.environment == "development":
             seed_booking_demo(session)
+            seed_packages(session)
     yield
 
 

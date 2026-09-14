@@ -22,8 +22,8 @@ export function Header() {
         <a href="#contact">יצירת קשר</a>
       </nav>
 
-      <a className={styles.headerCta} href="#contact">
-        קביעת פגישת ייעוץ
+      <a className={styles.headerCta} href="/portal?tab=book">
+        קביעת תור
       </a>
     </header>
   );

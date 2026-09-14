@@ -22,11 +22,26 @@ from app.services.availability import (
     BeauticianNotQualifiedError,
     TreatmentNotFoundError,
 )
-from app.services.booking import BookingService, SlotUnavailableError
+from app.services.appointment_lifecycle import (
+    AppointmentNotFoundError,
+    AppointmentPermissionError,
+    AppointmentStateError,
+    complete_appointment as complete_booking,
+)
+from app.services.booking import (
+    BookingService,
+    PackageNotUsableError,
+    SlotUnavailableError,
+)
 from app.services.booking_lock import (
     BookingLockBusyError,
     BookingLockManager,
     BookingLockUnavailableError,
+)
+from app.services.waitlist import (
+    WaitlistConflictError,
+    WaitlistNotFoundError,
+    cancel_customer_appointment,
 )
 
 router = APIRouter()
@@ -45,6 +60,10 @@ def get_booking_lock_manager() -> BookingLockManager:
 BookingLocks = Annotated[
     BookingLockManager,
     Depends(get_booking_lock_manager),
+]
+CurrentStaff = Annotated[
+    User,
+    Depends(require_roles(UserRole.BEAUTICIAN, UserRole.ADMIN)),
 ]
 
 
@@ -65,7 +84,7 @@ def list_availability(
     treatment_id: Annotated[int, Query(gt=0)],
     appointment_date: Annotated[date, Query(alias="date")],
     session: DatabaseSession,
-    _current_user: CurrentUser,
+    current_user: CurrentUser,
     beautician_id: Annotated[int | None, Query(gt=0)] = None,
 ) -> AvailabilityResponse:
     try:
@@ -73,6 +92,7 @@ def list_availability(
             treatment_id,
             appointment_date,
             beautician_id,
+            current_user.id,
         )
     except TreatmentNotFoundError:
         raise HTTPException(
@@ -145,6 +165,11 @@ def create_appointment(
             status_code=status.HTTP_409_CONFLICT,
             detail="Appointment slot is not available",
         ) from None
+    except PackageNotUsableError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Package is not available for this booking",
+        ) from None
     except BookingLockBusyError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -156,4 +181,32 @@ def create_appointment(
             detail="Booking is temporarily unavailable",
         ) from None
 
+    return AppointmentRead.model_validate(appointment)
+
+
+@router.delete("/{appointment_id}", response_model=AppointmentRead)
+def cancel_appointment(
+    appointment_id: int, customer: CurrentCustomer, session: BookingSession
+) -> AppointmentRead:
+    try:
+        appointment = cancel_customer_appointment(session, customer.id, appointment_id)
+    except WaitlistNotFoundError:
+        raise HTTPException(404, "Appointment not found") from None
+    except WaitlistConflictError as error:
+        raise HTTPException(409, str(error)) from None
+    return AppointmentRead.model_validate(appointment)
+
+
+@router.patch("/{appointment_id}/complete", response_model=AppointmentRead)
+def complete_appointment(
+    appointment_id: int, staff: CurrentStaff, session: BookingSession
+) -> AppointmentRead:
+    try:
+        appointment = complete_booking(session, appointment_id, staff)
+    except AppointmentNotFoundError:
+        raise HTTPException(404, "Appointment not found") from None
+    except AppointmentPermissionError:
+        raise HTTPException(403, "This appointment is not assigned to you") from None
+    except AppointmentStateError:
+        raise HTTPException(409, "Appointment cannot be completed") from None
     return AppointmentRead.model_validate(appointment)
