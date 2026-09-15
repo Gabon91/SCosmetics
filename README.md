@@ -173,3 +173,9 @@ npm run build
 פירוט אבני הדרך נמצא ב-[docs/ROADMAP.md](docs/ROADMAP.md).
 הסבר על זרימת שלב 4 ומסלול הדגמה נמצא ב-[docs/STAGE4_WALKTHROUGH.md](docs/STAGE4_WALKTHROUGH.md).
 הסבר על שלב 5 וה־Header המשותף נמצא ב-[docs/STAGE5_WALKTHROUGH.md](docs/STAGE5_WALKTHROUGH.md).
+לקראת ההגנה: [מדריך הצגה וצלילה לקוד](docs/PRESENTATION_GUIDE.md),
+[תיעוד עבודה עם AI](docs/AI_WORK_LOG.md), ו־
+[Postman Collection מיוצא](docs/SCosmetics.postman_collection.json).
+האוסף נוצר מסכמת OpenAPI של FastAPI באמצעות
+`cd server; .\.venv\Scripts\python.exe -m scripts.export_postman`;
+יש ליצור אותו מחדש אחרי שינוי בנתיבי ה־API. אין לשמור באוסף סיסמאות או טוקנים.

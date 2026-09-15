@@ -18,7 +18,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 196px;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: none;
 }
 
 html:has([data-portal]) {
