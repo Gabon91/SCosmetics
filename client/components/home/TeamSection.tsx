@@ -1,6 +1,7 @@
 import Image from "next/image";
+import type { TeamMember } from "@/app/lib/site";
 import styles from "@/app/page.module.css";
-import { TherapistCard } from "./TherapistCard";
+import { ExpandableCard } from "./ExpandableCard";
 
 const therapists = [
   {
@@ -29,7 +30,17 @@ const therapists = [
   },
 ] as const;
 
-export function TeamSection() {
+export function TeamSection({ team }: { team: TeamMember[] | null }) {
+  const founder = team?.find((member) => member.featured);
+  const cards = team === null
+    ? therapists.map((member) => ({ ...member, imageSrc: "/images/logo-scosmetics.png" }))
+    : team.filter((member) => !member.featured).map((member) => ({
+        name: member.name,
+        role: member.title,
+        description: member.description,
+        imageSrc: member.image_url || "/images/logo-scosmetics.png",
+      }));
+
   return (
     <section className={styles.team} id="team">
       <div className={styles.teamHeading}>
@@ -37,32 +48,33 @@ export function TeamSection() {
         <h2>הצוות שמלווה אותך בדרך לעור בריא ומטופח.</h2>
       </div>
 
-      <article className={styles.founderProfile}>
+      {(team === null || founder) && <article className={styles.founderProfile}>
         <Image
           className={styles.founderImage}
-          src="/images/Sigal_Levi.png"
-          alt="סיגל לוי, מייסדת מכון היופי S.Cosmetics"
+          src={founder?.image_url || "/images/Sigal_Levi.png"}
+          alt={founder ? `תמונה של ${founder.name}` : "סיגל לוי, מייסדת מכון היופי S.Cosmetics"}
           width={1080}
           height={1080}
           sizes="(max-width: 600px) calc(100vw - 40px), 560px"
         />
         <div className={styles.founderContent}>
-          <h3>סיגל לוי</h3>
-          <strong>מייסדת מכון היופי S.Cosmetics</strong>
-          <p>
-            סיגל הקימה את המכון מתוך אהבה לעולם הטיפוח והאסתטיקה ומתוך אמונה
-            שטיפול מקצועי מתחיל בהקשבה. היא משלבת יחס אישי, ניסיון והתאמה לצרכים
-            הייחודיים של כל מטופלת.
-          </p>
+          <h3>{founder?.name ?? "סיגל לוי"}</h3>
+          <strong>{founder?.title ?? "מייסדת מכון היופי S.Cosmetics"}</strong>
+          <p>{founder?.description ?? "סיגל הקימה את המכון מתוך אהבה לעולם הטיפוח והאסתטיקה ומתוך אמונה שטיפול מקצועי מתחיל בהקשבה. היא משלבת יחס אישי, ניסיון והתאמה לצרכים הייחודיים של כל מטופלת."}</p>
         </div>
-      </article>
+      </article>}
 
       <div className={styles.teamGrid}>
-        {therapists.map((therapist) => (
-          <TherapistCard
+        {cards.map((therapist) => (
+          <ExpandableCard
             key={therapist.name}
-            {...therapist}
-            imageSrc="/images/logo-scosmetics.png"
+            title={therapist.name}
+            subtitle={therapist.role}
+            description={therapist.description}
+            imageSrc={therapist.imageSrc}
+            imageAlt={`תמונה של ${therapist.name}`}
+            readMoreLabel={`קרא עוד על ${therapist.name}`}
+            closeLabel={`סגור את המידע על ${therapist.name}`}
           />
         ))}
       </div>

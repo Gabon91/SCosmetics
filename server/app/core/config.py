@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./scosmetics.db"
     redis_url: str = "redis://localhost:6379/0"
     cache_ttl_seconds: int = 300
+    business_timezone: str = "Asia/Jerusalem"
 
     jwt_secret_key: SecretStr = SecretStr(
         "development-only-change-me-at-least-32-bytes"

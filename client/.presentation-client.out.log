@@ -1,0 +1,19 @@
+▲ Next.js 16.3.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.100.102.68:3000
+✓ Ready in 5.2s
+✓ Running next.config.ts took 379ms
+
+ GET / 200 in 1925ms (next.js: 1136ms, application-code: 789ms)
+ GET /portal 200 in 114ms (next.js: 37ms, application-code: 76ms)
+ GET / 200 in 175ms (next.js: 19ms, application-code: 156ms)
+ GET / 200 in 158ms (next.js: 7ms, application-code: 151ms)
+ GET / 200 in 236ms (next.js: 12ms, application-code: 224ms)
+ GET /portal?tab=book 200 in 130ms (next.js: 18ms, application-code: 113ms)
+ GET / 200 in 123ms (next.js: 22ms, application-code: 101ms)
+ GET /portal?tab=book 200 in 102ms (next.js: 23ms, application-code: 79ms)
+ GET / 200 in 97ms (next.js: 9ms, application-code: 88ms)
+ GET /portal?tab=book 200 in 78ms (next.js: 11ms, application-code: 67ms)
+ GET / 200 in 914ms (next.js: 68ms, application-code: 846ms)
+ GET / 200 in 961ms (next.js: 13ms, application-code: 948ms)
+ GET / 200 in 1001ms (next.js: 8ms, application-code: 994ms)

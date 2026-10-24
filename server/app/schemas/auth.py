@@ -72,3 +72,14 @@ class UserRead(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CustomerProfilePatch(BaseModel):
+    first_name: Name | None = None
+    last_name: Name | None = None
+    email: EmailStr | None = None
+    phone: Phone | None = None
+
+
+class CustomerAdminPatch(CustomerProfilePatch):
+    active: bool | None = None
